@@ -1,74 +1,74 @@
 const socket = io();
 
-const messagesDiv = document.getElementById("messages");
-const msgInput = document.getElementById("msgInput");
-const sendBtn = document.getElementById("sendBtn");
-const imgInput = document.getElementById("imgInput");
-const stopBtn = document.getElementById("stopBtn");
-const onlineCount = document.getElementById("online");
+const chatBox = document.getElementById("chat-box");
+const form = document.getElementById("chat-form");
+const input = document.getElementById("message");
+const imageInput = document.getElementById("image-input");
+const skipBtn = document.getElementById("skip");
+const onlineCount = document.getElementById("online-count");
 
-// Add a message to chat
-function addMessage(text, type = "system", isImage = false) {
+function addMessage(text, type = "system") {
   const div = document.createElement("div");
   div.classList.add("message", type);
-
-  if (isImage) {
-    const img = document.createElement("img");
-    img.src = text;
-    div.appendChild(img);
-  } else {
-    div.textContent = text;
-  }
-
-  messagesDiv.appendChild(div);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  div.textContent = text;
+  chatBox.appendChild(div);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Receive text
-socket.on("message", (data) => {
-  addMessage(data.text, data.sender);
+// Handle text messages
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  if (input.value) {
+    socket.emit("message", input.value);
+    addMessage(input.value, "user");
+    input.value = "";
+  }
 });
 
-// Receive image
+// Handle image sending
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    socket.emit("image", reader.result);
+
+    const img = document.createElement("img");
+    img.src = reader.result;
+    img.style.maxWidth = "200px";
+    img.style.display = "block";
+    chatBox.appendChild(img);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  };
+  reader.readAsDataURL(file);
+
+  // clear input so it can be re-used
+  imageInput.value = "";
+});
+
+// Skip button
+skipBtn.addEventListener("click", () => {
+  socket.emit("skip");
+  addMessage("⏭ You skipped. Searching for a new partner...", "system");
+});
+
+// Incoming messages
+socket.on("message", (msg) => {
+  addMessage(msg, "stranger");
+});
+
+// Incoming images
 socket.on("image", (imgData) => {
-  addMessage(imgData, "stranger", true);
+  const img = document.createElement("img");
+  img.src = imgData;
+  img.style.maxWidth = "200px";
+  img.style.display = "block";
+  chatBox.appendChild(img);
+  chatBox.scrollTop = chatBox.scrollHeight;
 });
 
-// Online count
+// Update online count
 socket.on("online-count", (count) => {
   onlineCount.textContent = `Online: ${count}`;
-});
-
-// Send text
-sendBtn.addEventListener("click", () => {
-  const msg = msgInput.value.trim();
-  if (msg) {
-    addMessage(msg, "self");
-    socket.emit("message", msg);
-    msgInput.value = "";
-  }
-});
-
-// Enter key sends message
-msgInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") sendBtn.click();
-});
-
-// Send image
-imgInput.addEventListener("change", () => {
-  const file = imgInput.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const imgData = reader.result;
-      addMessage(imgData, "self", true);
-      socket.emit("image", imgData);
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-// Stop button (reloads page to disconnect & requeue)
-stopBtn.addEventListener("click", () => {
-  window.location.reload();
 });
