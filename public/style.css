@@ -10,8 +10,8 @@ body {
 
 .app-container {
   background: white;
-  width: 400px;
-  height: 600px;
+  width: 1920px;
+  height: 1080px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
