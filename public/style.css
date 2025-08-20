@@ -1,0 +1,99 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.chat-container {
+  width: 400px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-container h1 {
+  text-align: center;
+  background: #4a90e2;
+  color: white;
+  padding: 15px;
+  margin: 0;
+}
+
+#online {
+  text-align: center;
+  margin: 10px 0;
+  color: #555;
+}
+
+.messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+.message {
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.message.system {
+  background: #eee;
+  color: #555;
+  text-align: center;
+}
+
+.message.self {
+  background: #4a90e2;
+  color: white;
+  align-self: flex-end;
+}
+
+.message.stranger {
+  background: #e5e5ea;
+  color: black;
+  align-self: flex-start;
+}
+
+.message img {
+  max-width: 200px;
+  border-radius: 8px;
+}
+
+.controls {
+  display: flex;
+  gap: 6px;
+  padding: 10px;
+  background: #fafafa;
+}
+
+.controls input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #357abd;
+}
