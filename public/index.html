@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Stranger Chat</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="chat-container">
-    <h1>Stranger Chat</h1>
-    <p id="online">Online: 0</p>
+  <div class="app-container">
+    <header>
+      <h1>💬 Stranger Chat</h1>
+      <p id="online-count">Online: 0</p>
+    </header>
 
-    <div id="messages" class="messages"></div>
+    <main>
+      <div id="chat-box"></div>
+    </main>
 
-    <div class="controls">
-      <input id="msgInput" type="text" placeholder="Type a message..." />
-      <button id="sendBtn">Send</button>
-      <input id="imgInput" type="file" accept="image/*" />
-      <button id="stopBtn">Stop</button>
-    </div>
+    <footer>
+      <form id="chat-form">
+        <input id="message" type="text" placeholder="Type a message..." autocomplete="off" required>
+        <input id="image-input" type="file" accept="image/*">
+        <button type="submit">Send</button>
+      </form>
+      <button id="skip">⏭ Skip</button>
+    </footer>
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
