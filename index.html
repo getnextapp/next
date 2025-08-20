@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Stranger Chat</title>
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; margin-top: 30px; }
+    #chat { width: 320px; height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: auto; margin-bottom: 10px; }
+    input, button { width: 320px; padding: 8px; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Stranger Chat</h1>
+  <div id="chat"></div>
+  <input id="msgBox" placeholder="Type a message..." autocomplete="off">
+  <button id="nextBtn">Next</button>
+  <button id="stopBtn">Stop</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const chat = document.getElementById("chat");
+    const msgBox = document.getElementById("msgBox");
+    const nextBtn = document.getElementById("nextBtn");
+    const stopBtn = document.getElementById("stopBtn");
+
+    function addMessage(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    socket.on("waiting", (msg) => addMessage(msg));
+    socket.on("chat start", (msg) => {
+      chat.innerHTML = ""; // clear old messages
+      addMessage(msg);
+    });
+    socket.on("message", (msg) => addMessage("Stranger: " + msg));
+
+    msgBox.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" && msgBox.value) {
+        socket.emit("message", msgBox.value);
+        addMessage("You: " + msgBox.value);
+        msgBox.value = "";
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      chat.innerHTML = "";
+      addMessage("Looking for a new partner...");
+      socket.emit("next");
+    });
+
+    stopBtn.addEventListener("click", () => {
+      chat.innerHTML = "";
+      addMessage("You ended the chat.");
+      socket.emit("stop");
+    });
+  </script>
+</body>
+</html>
